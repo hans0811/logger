@@ -3,11 +3,17 @@ package logging
 import (
 	"log"
 	"os"
+	"platform/config"
+	"strings"
 )
 
-func NewDefaultLogger(level LogLevel) Logger {
-	flags := log.Lmsgprefix | log.Ltime
+func NewDefaultLogger(cfg config.Configuration) Logger {
+	var level LogLevel = Debug
+	if configLevelString, found := cfg.GetString("logging:level"); found {
+		level = LogLevelFromString(configLevelString)
+	}
 
+	flags := log.Lmsgprefix | log.Ltime
 	return &DefaultLogger{
 		minLevel: level,
 		loggers: map[LogLevel]*log.Logger{
@@ -19,5 +25,23 @@ func NewDefaultLogger(level LogLevel) Logger {
 		},
 		triggerPanic: true,
 	}
+}
 
+func LogLevelFromString(val string) (level LogLevel) {
+	switch strings.ToLower(val) {
+	case "debug":
+		level = Debug
+	case "information":
+		level = Information
+	case "warning":
+		level = Warning
+	case "fatal":
+		level = Fatal
+	case "none":
+		level = None
+	default:
+		level = Debug
+	}
+
+	return
 }
