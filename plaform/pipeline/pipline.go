@@ -6,7 +6,7 @@ type RequestPipeline func(ctx *ComponentContext)
 
 var emptyPipeline RequestPipeline = func(ctx *ComponentContext) { /* do noting */ }
 
-func CratePipeline(components ...MiddlewareComponent) RequestPipeline {
+func CreatePipeline(components ...MiddlewareComponent) RequestPipeline {
 	f := emptyPipeline
 	for i := len(components) - 1; i >= 0; i-- {
 		currentComponent := components[i]
